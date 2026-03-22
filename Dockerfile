@@ -1,9 +1,7 @@
 FROM python:3.11-slim
 
-# Install system dependencies for Chromium
 RUN apt-get update && apt-get install -y \
     chromium \
-    chromium-driver \
     libglib2.0-0 \
     libnss3 \
     libnspr4 \
@@ -26,7 +24,6 @@ RUN apt-get update && apt-get install -y \
     libcairo2 \
     libasound2 \
     libatspi2.0-0 \
-    wget \
     --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
@@ -39,6 +36,4 @@ RUN playwright install chromium || true
 COPY . .
 RUN mkdir -p uploads reports
 
-EXPOSE 8080
-
-CMD gunicorn app:app --workers 2 --timeout 120 --bind 0.0.0.0:${PORT:-8080}
+CMD ["python", "start.py"]
