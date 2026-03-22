@@ -1,9 +1,0 @@
-__pycache__/
-*.pyc
-uploads/
-reports/
-instance/
-flask_session/
-.env
-*.db
-*.sqlite
