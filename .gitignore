@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+uploads/
+reports/
+instance/
+data/
+flask_session/
+.env
+*.db
+*.sqlite
