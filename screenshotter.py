@@ -32,18 +32,38 @@ def screenshot_url(url: str, output_dir: str = 'uploads') -> dict:
 
     print(f"[Screenshotter] Launching browser for: {url}")
 
+    # Check for system Chromium (used on Railway/Linux)
+    chromium_path = None
+    system_paths = [
+        '/usr/bin/chromium',
+        '/usr/bin/chromium-browser',
+        '/usr/bin/google-chrome',
+        '/usr/bin/google-chrome-stable',
+    ]
+    for path in system_paths:
+        if os.path.exists(path):
+            chromium_path = path
+            print(f"[Screenshotter] Using system Chromium: {path}")
+            break
+
     with sync_playwright() as p:
-        browser = p.chromium.launch(
-            headless=True,
-            args=[
+        launch_args = {
+            'headless': True,
+            'args': [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
                 '--disable-dev-shm-usage',
                 '--disable-gpu',
                 '--disable-web-security',
                 '--ignore-certificate-errors',
+                '--single-process',
             ]
-        )
+        }
+
+        if chromium_path:
+            launch_args['executable_path'] = chromium_path
+
+        browser = p.chromium.launch(**launch_args)
 
         page = browser.new_page(
             viewport={'width': 1440, 'height': 900},
@@ -54,7 +74,6 @@ def screenshot_url(url: str, output_dir: str = 'uploads') -> dict:
             )
         )
 
-        # Try loading the page — multiple fallback strategies
         loaded = False
         last_error = None
 
@@ -74,7 +93,6 @@ def screenshot_url(url: str, output_dir: str = 'uploads') -> dict:
             browser.close()
             raise ConnectionError(f"Could not load {url}. Error: {last_error}")
 
-        # Let page settle
         try:
             page.wait_for_timeout(2500)
         except Exception:
