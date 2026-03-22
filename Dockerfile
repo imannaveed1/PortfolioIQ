@@ -30,28 +30,15 @@ RUN apt-get update && apt-get install -y \
     --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
-# Set working directory
 WORKDIR /app
 
-# Copy requirements and install Python packages
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
-
-# Install Playwright and tell it to use system Chromium
 RUN playwright install chromium || true
 
-# Set Playwright to use system chromium
-ENV PLAYWRIGHT_BROWSERS_PATH=/usr/bin
-ENV CHROMIUM_PATH=/usr/bin/chromium
-
-# Copy all project files
 COPY . .
-
-# Create required folders
 RUN mkdir -p uploads reports
 
-# Expose port
 EXPOSE 8080
 
-# Start the app
-CMD ["gunicorn", "app:app", "--workers", "2", "--timeout", "120", "--bind", "0.0.0.0:8080"]
+CMD gunicorn app:app --workers 2 --timeout 120 --bind 0.0.0.0:${PORT:-8080}
