@@ -1,0 +1,11 @@
+flask
+flask-sqlalchemy
+numpy
+opencv-python-headless
+scikit-learn
+reportlab
+werkzeug
+playwright
+gunicorn
+psycopg2-binary
+python-dotenv
