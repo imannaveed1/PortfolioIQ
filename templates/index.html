@@ -38,11 +38,12 @@
     </div>
 
     <div id="panel-upload" class="tab-panel active">
+      <!-- file input hidden, only opened by JS -->
+      <input type="file" id="file-input" accept="image/png,image/jpeg,image/webp,image/bmp" hidden>
       <div class="upload-zone" id="drop-zone">
-        <input type="file" id="file-input" accept="image/png,image/jpeg,image/webp,image/bmp" hidden>
         <div class="upload-icon">📸</div>
         <div class="upload-title">Drop your screenshot here</div>
-        <div class="upload-sub">or <button class="link-btn" onclick="document.getElementById('file-input').click()">browse files</button></div>
+        <div class="upload-sub">or <span class="link-btn" id="browse-btn">browse files</span></div>
         <div class="upload-hint">PNG · JPG · WEBP · BMP · Max 16MB</div>
       </div>
     </div>
