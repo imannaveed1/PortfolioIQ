@@ -106,7 +106,6 @@ async function analyzeFromUrl() {
   showScreen('progress-screen');
   setProgress(5, 'Launching headless browser…', url);
 
-  // URL steps are slower — page loading takes time
   const steps = [
     [1200, 10, 'Opening browser…'],
     [2500, 20, 'Navigating to URL…'],
@@ -148,7 +147,6 @@ async function analyzeFromUrl() {
 // ─── Render Results ───────────────────────────────────────────────────────
 
 function renderResults(data) {
-  // Source tag
   const src = data.source || {};
   const sourceEl = document.getElementById('source-tag');
   if (src.type === 'url') {
@@ -404,16 +402,42 @@ function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
 // ─── Event Listeners ──────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
-  const dropZone = document.getElementById('drop-zone');
   const fileInput = document.getElementById('file-input');
+  const dropZone  = document.getElementById('drop-zone');
+  const browseBtn = document.querySelector('.link-btn');
 
-  dropZone.addEventListener('click', () => fileInput.click());
-  fileInput.addEventListener('change', e => { if (e.target.files[0]) analyzeFile(e.target.files[0]); });
+  // Browse button opens file picker
+  browseBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    fileInput.click();
+  });
 
-  dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+  // Drop zone click opens file picker only if not clicking browse button
+  dropZone.addEventListener('click', (e) => {
+    if (e.target === browseBtn) return;
+    fileInput.click();
+  });
+
+  // File selected from picker
+  fileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      analyzeFile(file);
+      // Reset input so same file can be selected again
+      fileInput.value = '';
+    }
+  });
+
+  // Drag and drop
+  dropZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropZone.classList.add('dragover');
+  });
   dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
-  dropZone.addEventListener('drop', e => {
-    e.preventDefault(); dropZone.classList.remove('dragover');
-    if (e.dataTransfer.files[0]) analyzeFile(e.dataTransfer.files[0]);
+  dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('dragover');
+    const file = e.dataTransfer.files[0];
+    if (file) analyzeFile(file);
   });
 });
