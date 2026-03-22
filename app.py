@@ -31,6 +31,10 @@ app.json_encoder = NumpyEncoder
 
 db = SQLAlchemy(app)
 
+# ─── Create folders immediately at startup ────────────────────────────────────
+os.makedirs('uploads', exist_ok=True)
+os.makedirs('reports', exist_ok=True)
+
 # ─── Database Model ───────────────────────────────────────────────────────────
 
 class Analysis(db.Model):
@@ -194,6 +198,4 @@ def stats():
 
 
 if __name__ == '__main__':
-    os.makedirs('uploads', exist_ok=True)
-    os.makedirs('reports', exist_ok=True)
     app.run(debug=False, port=5000, threaded=True)
