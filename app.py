@@ -62,7 +62,7 @@ class Analysis(db.Model):
     created_at  = db.Column(db.DateTime, default=datetime.utcnow)
 
 with app.app_context():
-    db.create_all()
+    db.create_all(checkfirst=True)
 
 @login_manager.user_loader
 def load_user(user_id):
