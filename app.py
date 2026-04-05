@@ -43,6 +43,7 @@ os.makedirs('reports', exist_ok=True)
 # ─── Database Models ──────────────────────────────────────────────────────────
 
 class User(UserMixin, db.Model):
+    __tablename__ = 'user'
     id         = db.Column(db.Integer, primary_key=True)
     name       = db.Column(db.String(100), nullable=False)
     email      = db.Column(db.String(150), unique=True, nullable=False)
@@ -51,6 +52,7 @@ class User(UserMixin, db.Model):
     analyses   = db.relationship('Analysis', backref='user', lazy=True)
 
 class Analysis(db.Model):
+    __tablename__ = 'analysis'
     id          = db.Column(db.Integer, primary_key=True)
     user_id     = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     source_type = db.Column(db.String(10))
@@ -60,6 +62,12 @@ class Analysis(db.Model):
     scores_json = db.Column(db.Text)
     full_json   = db.Column(db.Text)
     created_at  = db.Column(db.DateTime, default=datetime.utcnow)
+
+with app.app_context():
+    try:
+        db.create_all()
+    except Exception as e:
+        print(f"[DB] create_all warning: {e}")
 
 with app.app_context():
     db.create_all()
