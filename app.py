@@ -62,7 +62,17 @@ class Analysis(db.Model):
     created_at  = db.Column(db.DateTime, default=datetime.utcnow)
 
 with app.app_context():
-    db.create_all(checkfirst=True)
+    db.create_all()
+    
+class User(UserMixin, db.Model):
+    __tablename__ = 'user'
+    __table_args__ = {'extend_existing': True}
+    # ... rest unchanged
+
+class Analysis(db.Model):
+    __tablename__ = 'analysis'
+    __table_args__ = {'extend_existing': True}
+    # ... rest unchanged
 
 @login_manager.user_loader
 def load_user(user_id):
