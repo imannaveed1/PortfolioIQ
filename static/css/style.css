@@ -322,3 +322,9 @@ body {
   .data-table { font-size: 11px; }
   .data-table td, .data-table th { padding: 8px; }
 }
+.header-auth {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
