@@ -36,7 +36,6 @@ db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
-# Create folders at startup
 os.makedirs('uploads', exist_ok=True)
 os.makedirs('reports', exist_ok=True)
 
@@ -68,19 +67,6 @@ with app.app_context():
         db.create_all()
     except Exception as e:
         print(f"[DB] create_all warning: {e}")
-
-with app.app_context():
-    db.create_all()
-    
-class User(UserMixin, db.Model):
-    __tablename__ = 'user'
-    __table_args__ = {'extend_existing': True}
-    # ... rest unchanged
-
-class Analysis(db.Model):
-    __tablename__ = 'analysis'
-    __table_args__ = {'extend_existing': True}
-    # ... rest unchanged
 
 @login_manager.user_loader
 def load_user(user_id):
