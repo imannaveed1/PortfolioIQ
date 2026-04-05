@@ -9,3 +9,4 @@ playwright
 gunicorn
 psycopg2-binary
 python-dotenv
+flask-login
