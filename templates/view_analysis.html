@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analysis Result — PortfolioIQ</title>
+<link rel="stylesheet" href="/static/css/style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  .view-wrap { max-width: 1000px; margin: 0 auto; padding: 32px 24px 80px; }
+  .back-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 12px; }
+  .score-badge { display: flex; align-items: center; gap: 10px; }
+  .big-score { font-size: 48px; font-weight: 800; }
+  .meta-info { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); margin-top: 6px; }
+  .scores-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 20px; }
+  .score-box { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; text-align: center; }
+  .score-box-num { font-size: 26px; font-weight: 800; }
+  .score-box-label { font-size: 10px; color: var(--muted); font-family: 'DM Mono', monospace; margin-top: 4px; text-transform: uppercase; }
+  .palette-row { display: flex; flex-wrap: wrap; gap: 12px; }
+  .swatch { width: 44px; height: 44px; border-radius: 8px; border: 2px solid rgba(255,255,255,0.1); }
+  .suggestion-card { display: flex; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); margin-bottom: 10px; }
+  .suggestion-stripe { width: 4px; flex-shrink: 0; }
+  .suggestion-body { padding: 12px 16px; flex: 1; background: var(--bg2); }
+  .suggestion-issue { font-weight: 700; font-size: 13px; margin-bottom: 4px; }
+  .suggestion-text { font-size: 12px; color: var(--muted); line-height: 1.6; }
+  .priority-badge { font-family: 'DM Mono', monospace; font-size: 9px; padding: 2px 8px; border-radius: 4px; font-weight: 600; margin-right: 8px; }
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="header-inner">
+    <div class="logo">
+      <span class="logo-icon">🧠</span>
+      <div>
+        <div class="logo-name">PortfolioIQ</div>
+        <div class="logo-sub">AI Design Analyzer</div>
+      </div>
+    </div>
+    <div style="margin-left:auto;display:flex;gap:10px">
+      <a href="/history" class="btn-secondary" style="text-decoration:none;padding:8px 16px;border-radius:8px;font-size:13px">← History</a>
+      <a href="/" class="btn-secondary" style="text-decoration:none;padding:8px 16px;border-radius:8px;font-size:13px">+ New Analysis</a>
+    </div>
+  </div>
+</header>
+
+<div class="view-wrap">
+
+  <!-- Back bar -->
+  <div class="back-bar">
+    <div>
+      <div style="font-size:13px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:6px">
+        {% if record.source_type == 'url' %}🔗{% else %}📸{% endif %}
+        {{ record.source_name }}
+      </div>
+      <div class="meta-info">{{ record.created_at.strftime('%B %d, %Y · %H:%M') }}</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <div style="background:rgba(124,58,237,0.2);border:1px solid rgba(124,58,237,0.4);color:#c084fc;border-radius:8px;padding:6px 14px;font-family:'DM Mono',monospace;font-size:12px">
+        {{ record.style }}
+      </div>
+    </div>
+  </div>
+
+  <!-- Overall Score -->
+  <div class="section" style="margin-bottom:20px">
+    <div class="section-header">Overall Score</div>
+    <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap">
+      <div class="big-score" style="color:{% if record.overall >= 75 %}#22c55e{% elif record.overall >= 50 %}#f59e0b{% else %}#ef4444{% endif %}">
+        {{ record.overall|int }}<span style="font-size:20px;color:var(--muted)">/100</span>
+      </div>
+      <div>
+        <div style="font-size:16px;font-weight:700">{{ record.style }}</div>
+        {% if data.style %}
+        <div style="font-size:12px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:4px">
+          {{ data.style.confidence }}% confidence
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Score Breakdown -->
+  {% if data.scores %}
+  <div class="section" style="margin-bottom:20px">
+    <div class="section-header">Score Breakdown</div>
+    <div class="scores-row">
+      {% for key, label in [('contrast','Contrast'),('balance','Balance'),('whitespace','Whitespace'),('color_variety','Color Variety'),('complexity','Complexity')] %}
+      {% if data.scores[key] is defined %}
+      <div class="score-box">
+        <div class="score-box-num" style="color:{% if data.scores[key] >= 75 %}#22c55e{% elif data.scores[key] >= 50 %}#f59e0b{% else %}#ef4444{% endif %}">
+          {{ data.scores[key]|int }}
+        </div>
+        <div class="score-box-label">{{ label }}</div>
+      </div>
+      {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Color Palette -->
+  {% if data.palette %}
+  <div class="section" style="margin-bottom:20px">
+    <div class="section-header">Color Palette</div>
+    <div class="palette-row">
+      {% for c in data.palette %}
+      <div style="display:flex;flex-direction:column;align-items:center;gap:5px">
+        <div class="swatch" style="background:{{ c.hex }};box-shadow:0 4px 12px {{ c.hex }}55"></div>
+        <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted)">{{ c.hex }}</div>
+        <div style="font-size:9px;color:var(--border)">{{ c.percentage }}%</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Suggestions -->
+  {% if data.suggestions %}
+  <div class="section" style="margin-bottom:20px">
+    <div class="section-header">Improvement Recommendations</div>
+    {% set colors = {'High': '#ef4444', 'Medium': '#f59e0b', 'Low': '#22c55e', 'Info': '#38bdf8'} %}
+    {% for s in data.suggestions %}
+    {% set col = colors.get(s.priority, '#7c3aed') %}
+    <div class="suggestion-card">
+      <div class="suggestion-stripe" style="background:{{ col }}"></div>
+      <div class="suggestion-body">
+        <div style="display:flex;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:6px">
+          <span class="priority-badge" style="background:{{ col }}22;color:{{ col }}">{{ s.priority }}</span>
+          <span class="suggestion-issue">{{ s.issue }}</span>
+          <span style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;margin-left:auto">{{ s.category }}</span>
+        </div>
+        <div class="suggestion-text">{{ s.suggestion }}</div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+</div>
+</body>
+</html>

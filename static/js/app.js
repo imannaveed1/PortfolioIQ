@@ -441,3 +441,39 @@ document.addEventListener('DOMContentLoaded', () => {
     if (file) analyzeFile(file);
   });
 });
+
+// ─── Auth Header ──────────────────────────────────────────────────────────
+
+async function loadAuthHeader() {
+  try {
+    const res = await fetch('/auth/status');
+    const data = await res.json();
+    const el = document.getElementById('header-auth');
+    if (!el) return;
+
+    if (data.logged_in) {
+      el.innerHTML = `
+        <div style="display:flex;align-items:center;gap:10px">
+          <a href="/history" style="background:rgba(124,58,237,0.2);border:1px solid rgba(124,58,237,0.4);color:#c084fc;padding:7px 14px;border-radius:8px;font-size:12px;text-decoration:none;font-family:'DM Mono',monospace">
+            📊 My History
+          </a>
+          <span style="font-size:13px;color:var(--muted)">Hi, ${data.name.split(' ')[0]}</span>
+          <a href="/logout" style="background:var(--card);border:1px solid var(--border);color:var(--muted);padding:7px 14px;border-radius:8px;font-size:12px;text-decoration:none">
+            Logout
+          </a>
+        </div>`;
+    } else {
+      el.innerHTML = `
+        <div style="display:flex;align-items:center;gap:8px">
+          <a href="/login" style="background:var(--card);border:1px solid var(--border);color:var(--muted);padding:7px 16px;border-radius:8px;font-size:13px;text-decoration:none">
+            Log in
+          </a>
+          <a href="/signup" style="background:linear-gradient(135deg,#a855f7,#6366f1);border:none;color:white;padding:8px 16px;border-radius:8px;font-size:13px;text-decoration:none;font-weight:700">
+            Sign up
+          </a>
+        </div>`;
+    }
+  } catch(e) {}
+}
+
+document.addEventListener('DOMContentLoaded', loadAuthHeader);

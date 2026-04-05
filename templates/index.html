@@ -17,6 +17,9 @@
         <div class="logo-sub">AI Design Analyzer</div>
       </div>
     </div>
+    <div class="header-auth" id="header-auth">
+      <!-- Filled by JS -->
+    </div>
   </div>
 </header>
 
@@ -38,7 +41,6 @@
     </div>
 
     <div id="panel-upload" class="tab-panel active">
-      <!-- file input hidden, only opened by JS -->
       <input type="file" id="file-input" accept="image/png,image/jpeg,image/webp,image/bmp" hidden>
       <div class="upload-zone" id="drop-zone">
         <div class="upload-icon">📸</div>
@@ -62,7 +64,6 @@
           <span class="url-ex-label">Try an example:</span>
           <button class="url-ex-btn" onclick="setExampleUrl('https://brittanychiang.com')">brittanychiang.com</button>
           <button class="url-ex-btn" onclick="setExampleUrl('https://leerob.io')">leerob.io</button>
-          <button class="url-ex-btn" onclick="setExampleUrl('https://www.sarahdayan.dev')">sarahdayan.dev</button>
         </div>
         <div class="url-note">⏱ URL analysis takes 10–20 seconds while we load and screenshot your site.</div>
       </div>

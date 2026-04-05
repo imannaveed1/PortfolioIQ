@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My History — PortfolioIQ</title>
+<link rel="stylesheet" href="/static/css/style.css">
+<style>
+  .history-wrap { max-width: 900px; margin: 0 auto; padding: 40px 24px; }
+  .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; flex-wrap: wrap; gap: 12px; }
+  .history-title { font-size: 26px; font-weight: 800; }
+  .history-sub { font-size: 13px; color: var(--muted); margin-top: 4px; font-family: 'DM Mono', monospace; }
+  .history-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px 24px; margin-bottom: 14px; display: flex; align-items: center; gap: 20px; cursor: pointer; transition: 0.2s; text-decoration: none; color: inherit; }
+  .history-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .history-score { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 800; flex-shrink: 0; }
+  .history-info { flex: 1; min-width: 0; }
+  .history-name { font-weight: 700; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .history-meta { font-size: 12px; color: var(--muted); font-family: 'DM Mono', monospace; margin-top: 4px; }
+  .history-style { background: rgba(124,58,237,0.2); border: 1px solid rgba(124,58,237,0.3); color: #c084fc; border-radius: 6px; padding: 3px 10px; font-size: 11px; font-family: 'DM Mono', monospace; white-space: nowrap; }
+  .history-arrow { color: var(--muted); font-size: 20px; }
+  .empty-state { text-align: center; padding: 80px 24px; }
+  .empty-icon { font-size: 64px; margin-bottom: 20px; }
+  .empty-title { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+  .empty-sub { color: var(--muted); font-size: 14px; margin-bottom: 24px; }
+  .score-green { background: rgba(34,197,94,0.15); color: #22c55e; }
+  .score-yellow { background: rgba(245,158,11,0.15); color: #f59e0b; }
+  .score-red { background: rgba(239,68,68,0.15); color: #ef4444; }
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="header-inner">
+    <div class="logo">
+      <span class="logo-icon">🧠</span>
+      <div>
+        <div class="logo-name">PortfolioIQ</div>
+        <div class="logo-sub">AI Design Analyzer</div>
+      </div>
+    </div>
+    <div style="margin-left:auto;display:flex;gap:10px;align-items:center">
+      <a href="/" class="btn-secondary" style="text-decoration:none;padding:8px 16px;border-radius:8px;font-size:13px">← Analyzer</a>
+      <a href="/logout" class="btn-secondary" style="text-decoration:none;padding:8px 16px;border-radius:8px;font-size:13px">Logout</a>
+    </div>
+  </div>
+</header>
+
+<div class="history-wrap">
+  <div class="history-header">
+    <div>
+      <div class="history-title">My Analysis History</div>
+      <div class="history-sub">Welcome back, {{ user.name }} · {{ analyses|length }} analyses total</div>
+    </div>
+    <a href="/" class="btn-primary" style="text-decoration:none">+ New Analysis</a>
+  </div>
+
+  {% if analyses %}
+    {% for a in analyses %}
+    <a href="/history/{{ a.id }}" class="history-card">
+      <div class="history-score {% if a.overall >= 75 %}score-green{% elif a.overall >= 50 %}score-yellow{% else %}score-red{% endif %}">
+        {{ a.overall|int }}
+      </div>
+      <div class="history-info">
+        <div class="history-name">
+          {% if a.source_type == 'url' %}🔗{% else %}📸{% endif %}
+          {{ a.source_name }}
+        </div>
+        <div class="history-meta">{{ a.created_at.strftime('%B %d, %Y · %H:%M') }}</div>
+      </div>
+      <div class="history-style">{{ a.style }}</div>
+      <div class="history-arrow">›</div>
+    </a>
+    {% endfor %}
+  {% else %}
+    <div class="empty-state">
+      <div class="empty-icon">📊</div>
+      <div class="empty-title">No analyses yet</div>
+      <div class="empty-sub">Upload a portfolio screenshot or paste a URL to get started</div>
+      <a href="/" class="btn-primary" style="text-decoration:none;display:inline-block">Start Analyzing →</a>
+    </div>
+  {% endif %}
+</div>
+</body>
+</html>

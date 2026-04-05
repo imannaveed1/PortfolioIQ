@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign Up — PortfolioIQ</title>
+<link rel="stylesheet" href="/static/css/style.css">
+<style>
+  .auth-container {
+    max-width: 420px; margin: 80px auto; padding: 0 24px;
+  }
+  .auth-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 20px; padding: 40px;
+  }
+  .auth-logo {
+    text-align: center; margin-bottom: 32px;
+  }
+  .auth-logo .logo-icon { font-size: 36px; }
+  .auth-logo .logo-name { font-size: 22px; font-weight: 800; margin-top: 8px; }
+  .auth-title {
+    font-size: 22px; font-weight: 800; margin-bottom: 8px; text-align: center;
+  }
+  .auth-sub {
+    font-size: 13px; color: var(--muted); text-align: center; margin-bottom: 28px;
+  }
+  .form-group { margin-bottom: 16px; }
+  .form-label {
+    display: block; font-size: 12px; font-family: 'DM Mono', monospace;
+    color: var(--muted); margin-bottom: 6px; text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .form-input {
+    width: 100%; background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 12px 16px; color: var(--text);
+    font-family: 'Syne', sans-serif; font-size: 14px; outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-input:focus { border-color: var(--accent); }
+  .form-input::placeholder { color: var(--muted); }
+  .btn-submit {
+    width: 100%; background: linear-gradient(135deg, #a855f7, #6366f1);
+    border: none; color: white; padding: 13px; border-radius: 10px;
+    cursor: pointer; font-family: 'Syne', sans-serif; font-size: 15px;
+    font-weight: 700; margin-top: 8px; transition: 0.15s;
+  }
+  .btn-submit:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(124,58,237,0.35); }
+  .auth-footer {
+    text-align: center; margin-top: 24px; font-size: 13px; color: var(--muted);
+  }
+  .auth-footer a { color: var(--accent); text-decoration: none; }
+  .auth-footer a:hover { text-decoration: underline; }
+  .error-msg {
+    background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3);
+    color: #ef4444; border-radius: 8px; padding: 10px 14px;
+    font-size: 13px; margin-bottom: 16px; display: none;
+  }
+  .divider {
+    display: flex; align-items: center; gap: 12px; margin: 20px 0;
+    color: var(--muted); font-size: 12px;
+  }
+  .divider::before, .divider::after {
+    content: ''; flex: 1; height: 1px; background: var(--border);
+  }
+  .btn-guest {
+    width: 100%; background: var(--bg2); border: 1px solid var(--border);
+    color: var(--muted); padding: 12px; border-radius: 10px;
+    cursor: pointer; font-family: 'Syne', sans-serif; font-size: 14px;
+    transition: 0.15s;
+  }
+  .btn-guest:hover { border-color: var(--accent); color: var(--text); }
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="header-inner">
+    <div class="logo">
+      <span class="logo-icon">🧠</span>
+      <div>
+        <div class="logo-name">PortfolioIQ</div>
+        <div class="logo-sub">AI Design Analyzer</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="auth-container">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="logo-icon">🧠</div>
+      <div class="logo-name">PortfolioIQ</div>
+    </div>
+
+    <div class="auth-title">Create your account</div>
+    <div class="auth-sub">Sign up to save your analysis history</div>
+
+    <div class="error-msg" id="error-msg"></div>
+
+    <div class="form-group">
+      <label class="form-label">Full Name</label>
+      <input type="text" class="form-input" id="name" placeholder="Iman Naveed">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email Address</label>
+      <input type="email" class="form-input" id="email" placeholder="you@example.com">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input type="password" class="form-input" id="password" placeholder="Min 6 characters">
+    </div>
+
+    <button class="btn-submit" onclick="signup()">Create Account →</button>
+
+    <div class="divider">or</div>
+    <button class="btn-guest" onclick="window.location.href='/'">Continue without account</button>
+
+    <div class="auth-footer">
+      Already have an account? <a href="/login">Log in</a>
+    </div>
+  </div>
+</div>
+
+<script>
+async function signup() {
+  const name     = document.getElementById('name').value.trim();
+  const email    = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  const errorEl  = document.getElementById('error-msg');
+  errorEl.style.display = 'none';
+
+  if (!name || !email || !password) {
+    errorEl.textContent = 'Please fill in all fields.';
+    errorEl.style.display = 'block';
+    return;
+  }
+
+  const btn = document.querySelector('.btn-submit');
+  btn.textContent = 'Creating account…';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch('/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, password }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      errorEl.textContent = data.error;
+      errorEl.style.display = 'block';
+      btn.textContent = 'Create Account →';
+      btn.disabled = false;
+    } else {
+      window.location.href = '/';
+    }
+  } catch (err) {
+    errorEl.textContent = 'Something went wrong. Try again.';
+    errorEl.style.display = 'block';
+    btn.textContent = 'Create Account →';
+    btn.disabled = false;
+  }
+}
+
+// Allow Enter key
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter') signup();
+});
+</script>
+</body>
+</html>
