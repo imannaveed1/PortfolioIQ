@@ -8,7 +8,8 @@ print(f"Starting gunicorn on port {port}")
 subprocess.run([
     sys.executable, '-m', 'gunicorn',
     'app:app',
-    '--workers', '2',
-    '--timeout', '120',
-    '--bind', f'0.0.0.0:{port}'
+    '--workers', '1',
+    '--timeout', '180',
+    '--bind', f'0.0.0.0:{port}',
+    '--preload',
 ])
