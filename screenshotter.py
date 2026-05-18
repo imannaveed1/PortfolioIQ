@@ -153,10 +153,11 @@ def screenshot_url(url: str, output_dir: str = 'uploads') -> dict:
             last_error = None
 
             strategies = [
-                ('domcontentloaded', 25000),
-                ('load', 25000),
-                ('networkidle', 20000),
-            ]
+    ('domcontentloaded', 40000),
+    ('load', 40000),
+    ('networkidle', 30000),
+]
+            
 
             for strategy, timeout in strategies:
                 try:

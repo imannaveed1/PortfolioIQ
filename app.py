@@ -237,7 +237,7 @@ def analyze_url():
 
     t = threading.Thread(target=do_screenshot)
     t.start()
-    t.join(timeout=60)
+    t.join(timeout=120)
 
     if t.is_alive():
         return jsonify({'error': 'Page took too long to load.'}), 408
